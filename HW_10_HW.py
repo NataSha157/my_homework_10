@@ -35,11 +35,13 @@ class Field(): # буде батьківським для всіх полів, �
     pass
 
 class Phone(Field): # необов'язкове поле з телефоном та таких один запис (Record) може містити кілька
+    def __int__(self, value: Field):
+        self.value = value
     pass
 
 class Name(Field): # обов'язкове поле з ім'ям
-    def __int__(self, name: str):
-        self.name = name
+    def __int__(self, value: Field):
+        self.value = value
     pass
 
 class Email(Field):
@@ -48,57 +50,43 @@ class Email(Field):
 
 class Record(): #відповідає за логіку додавання/видалення/редагування необов'язкових полів та зберігання
     # обов'язкового поля Name.
-    def __init__(self, name: Name, phones: list) -> None:
+    def __init__(self, name: Name, phone: Phone = None) -> None:
         self.name = name
-        self.phones = [Phone(phone) for phone in phones]
+        self.phones = []
+        if phone:
+            self.phones.append(phone)  # якщо телефон прийде як обьект классу то додамо його в список
         # self.emails = emails
 
 
     def add_phone(self, phone: Phone):
         phone_number = Phone(phone)
-        if phone_number not in self.phones:
+        if phone_number.value not in [ph.value for ph in self.phones]:
             self.phones.append(phone_number)
 
-    # def add_email(self, email: Email):
-    #     email_str = Email(email)
-    #     if email_str not in self.emails:
-    #         self.emails.append(email_str)
 
     def edit_phone(self, phone_old, phone_new: Phone):
         phone_number_old = Phone(phone_old)
         phone_number_new = Phone(phone_new)
-        if phone_number_old in self.phones:
-            index = self.phones.index(phone_number_old)
-            self.phones[index] = phone_number_new
+        if phone_number_old.value in [ph.value for ph in self.phones]:
+            print(phone_number_old.value in [ph.value for ph in self.phones])
+            print('self.phones[0].value =', self.phones[0].value)
+            self.phones[0].value = phone_number_new.value
         else:
-            Record.add_phone(phone_number_new)
+            self.phones.append(phone_number_new)
+            print('self.phones[1].value =', self.phones[1].value)
 
-    # def edit_email(self, email_old, email_new: Phone):
-    #     email_str_old = Phone(email_old)
-    #     email_str_new = Phone(email_new)
-    #     if email_str_old in self.emails:
-    #         index = self.emails.index(email_str_old)
-    #         self.emails[index] = email_str_new
-    #     else:
-    #         Record.add_email(email_str_new)
 
-    def del_phone(self, phone: Phone):
-        phone_number = Phone(phone)
-        if phone_number in self.phones:
-            self.phones.remove(phone_number)
-
-    # def del_email(self, email: Email):
-    #     email_str = Email(email)
-    #     if email_str in self.emails:
-    #         self.emails.remove(email_str)
-
-    pass
+    def del_phone(self, phone: Phone): # не розумію, як видалити об"єкт (пише, що його не існує)
+        # phone_number = Phone(phone)
+        # if phone_number.value in [ph.value for ph in self.phones]:
+            # self.phones.remove(phone_number)
+        pass
 
 
 class AddressBook(UserDict): # наслідується від UserDict, та ми потім додамо логіку пошуку за записами до цього класу
 
     def add_record(self, record: Record):
-        self.data[Record.name.value] = record
+        self.data[record.name.value] = record
 
     pass
 
@@ -116,3 +104,4 @@ if __name__ == "__main__":
     assert isinstance(ab['Bill'].phones[0], Phone)
     assert ab['Bill'].phones[0].value == '1234567890'
     print('All Ok)')
+
