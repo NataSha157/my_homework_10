@@ -35,13 +35,10 @@ class Field(): # буде батьківським для всіх полів, �
     pass
 
 class Phone(Field): # необов'язкове поле з телефоном та таких один запис (Record) може містити кілька
-    def __int__(self, value: Field):
-        self.value = value
+  
     pass
 
 class Name(Field): # обов'язкове поле з ім'ям
-    def __int__(self, value: Field):
-        self.value = value
     pass
 
 class Email(Field):
